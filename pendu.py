@@ -22,12 +22,14 @@ pygame.display.set_caption("Jeu du Pendu")
 
 # Charger les images du pendu
 pendu_images = [pygame.image.load(os.path.join("penduimg", f"pendu{i}.png")) for i in range(1, 6)]
-game_over_image = pygame.image.load(os.path.join("penduimg", "gameover.png"))
 winner_image = pygame.image.load(os.path.join("penduimg", "winner.png"))
 
 # Charger les mots depuis le fichier mots.txt
 with open("mots.txt", "r") as file:
     mots = [mot.strip().lower() for mot in file.readlines()]
+
+# Pour afficher le mot a la fin (game over)
+mot_a_deviner_actuel = ""
 
 # Fonction pour choisir un mot aléatoire
 def choisir_mot():
@@ -160,7 +162,6 @@ def afficher_victoire():
     screen.blit(titre_texte, (SCREEN_WIDTH // 2 - titre_texte.get_width() // 2, 50))
 
     # Charger l'image spécifique pour l'écran de victoire
-    winner_image = pygame.image.load(os.path.join("penduimg", "winner.png"))
     screen.blit(winner_image, (SCREEN_WIDTH // 2 - winner_image.get_width() // 2, 150))
 
     pygame.display.flip()
@@ -169,9 +170,12 @@ def afficher_victoire():
 
 # Fonction principale du jeu
 def jouer():
+    global mot_a_deviner_actuel  
+
     afficher_fond_jeu()
     
     mot_a_deviner = choisir_mot().lower()
+    mot_a_deviner_actuel = mot_a_deviner 
     lettres_decouvertes = set()
     erreurs = 0
 
@@ -202,7 +206,7 @@ def jouer():
         if erreurs < 5:
             screen.blit(pendu_images[erreurs], (SCREEN_WIDTH // 2 - pendu_images[erreurs].get_width() // 2, 150))
         else:
-            screen.blit(game_over_image, (SCREEN_WIDTH // 2 - game_over_image.get_width() // 2, 150))
+            afficher_mot_correct()  # Afficher le mot correct en cas de défaite
             pygame.display.flip()
             pygame.time.wait(3000)  # Attendre 3 secondes avant de quitter
             return
@@ -215,6 +219,21 @@ def jouer():
             running = False
 
         clock.tick(FPS)
+
+# Fonction pour afficher le mot correct en cas de défaite
+def afficher_mot_correct():
+    afficher_fond_jeu()
+
+    font_large = pygame.font.Font(None, 72)
+    titre_texte = font_large.render("Dommage!", True, BLACK)
+    screen.blit(titre_texte, (SCREEN_WIDTH // 2 - titre_texte.get_width() // 2, 50))
+
+    font = pygame.font.Font(None, 36)
+
+    mot_correct_texte = font.render(f"Le mot était : {mot_a_deviner_actuel}", True, BLACK)
+    screen.blit(mot_correct_texte, (SCREEN_WIDTH // 2 - mot_correct_texte.get_width() // 2, 200))
+
+    pygame.display.flip()
 
 # Fonction pour afficher le menu principal
 def menu_principal():

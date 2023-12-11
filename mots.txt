@@ -1,7 +1,6 @@
 Chat
 Maison
 Plateforme
-Chat
 Maison
 Arbre
 Voiture
@@ -16,3 +15,5 @@ Famille
 Musique
 Voyage
 Feuille
+Canard
+Boeuf
